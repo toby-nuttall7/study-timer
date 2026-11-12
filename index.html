@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#2f6f5e">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Study Timer</title>
+<style>
+:root{--bg:#fafaf9;--fg:#1c1917;--mut:#78716c;--card:#f1f0ed;--line:#e3e1dc;--acc:#2f6f5e;--on:#fff;--bad:#b4432f;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121211;--fg:#ecebe8;--mut:#9a9791;--card:#1c1c1a;--line:#2e2d2a;--acc:#6fc2a8;--on:#0d1f19;--bad:#e58b78;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121211;--fg:#ecebe8;--mut:#9a9791;--card:#1c1c1a;--line:#2e2d2a;--acc:#6fc2a8;--on:#0d1f19;--bad:#e58b78;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:520px;margin:0 auto;padding:16px 16px 90px}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--bg);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;padding:14px 0;background:none;border:0;color:var(--mut);font:inherit;font-size:14px}
+nav button.on{color:var(--acc);font-weight:600}
+button{cursor:pointer}
+.btn{background:var(--acc);color:var(--on);border:0;border-radius:12px;padding:14px 22px;font:inherit;font-weight:600}
+.btn.ghost{background:var(--card);color:var(--fg)}
+.lnk{background:none;border:0;color:var(--mut);padding:10px;font:inherit;font-size:14px}
+.seg{display:flex;background:var(--card);border-radius:12px;padding:3px}
+.seg button{flex:1;border:0;background:none;color:var(--mut);padding:9px 4px;border-radius:10px;font:inherit;font-size:14px}
+.seg button.on{background:var(--bg);color:var(--fg);font-weight:600;box-shadow:0 0 0 1px var(--line)}
+.clock{font-size:64px;font-weight:300;text-align:center;font-variant-numeric:tabular-nums;margin:26px 0 4px;letter-spacing:-1px}
+.sub{text-align:center;color:var(--mut);min-height:1.4em}
+.ctrl{display:flex;flex-direction:column;gap:10px;margin-top:20px}
+input,select,textarea{font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 12px;min-width:0}
+select{width:100%}
+.row{display:flex;gap:8px;align-items:center;margin-top:8px}
+.row input{flex:1}
+.chips{display:flex;gap:6px;margin:12px 0 0;flex-wrap:wrap;align-items:center}
+.chip{border:1px solid var(--line);background:none;color:var(--fg);border-radius:999px;padding:8px 14px;font:inherit;font-size:14px;display:inline-flex;align-items:center}
+.chip.on{background:var(--acc);color:var(--on);border-color:var(--acc)}
+.chip button{border:0;background:none;color:var(--mut);margin-left:6px;font-size:16px;padding:0}
+.chips input{width:84px;padding:8px 10px}
+.lab,h2{display:block;color:var(--mut);font-size:13px;margin:18px 0 6px;font-weight:500}
+h2{text-transform:uppercase;letter-spacing:.05em}
+.nav{display:flex;align-items:center;justify-content:space-between;margin:12px 0 8px}
+.nav button{border:0;background:var(--card);color:var(--fg);width:40px;height:40px;border-radius:10px;font-size:20px}
+.nav button:disabled{opacity:.3}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.tile{background:var(--card);border-radius:12px;padding:12px}
+.tile b{display:block;font-size:20px;font-weight:600}
+.tile span{color:var(--mut);font-size:12px}
+.chart{display:flex;align-items:stretch;gap:3px;height:130px;overflow-x:auto;margin:16px 0 0}
+.bar{display:flex;flex-direction:column;flex:1;min-width:12px}
+.f{flex:1;display:flex;align-items:flex-end}
+.f i{display:block;width:100%;background:var(--acc);border-radius:3px 3px 0 0}
+.bar em{font-size:10px;color:var(--mut);font-style:normal;height:14px;white-space:nowrap;text-align:center}
+.mrow{margin:10px 0}.mrow div{display:flex;justify-content:space-between;font-size:14px}
+.mrow u{display:block;height:6px;border-radius:3px;background:var(--acc);margin-top:4px;text-decoration:none}
+.item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.item small{display:block;color:var(--mut)}
+.end{display:flex;align-items:center;gap:6px}
+.x{border:0;background:none;color:var(--mut);font-size:20px;padding:4px 8px}
+.x.arm{color:var(--bad);font-size:14px}
+.mut{color:var(--mut);font-size:14px}
+textarea{width:100%;height:90px;font-size:12px;margin-top:8px}
+details{margin-top:22px}summary{color:var(--mut);cursor:pointer}
+.demo{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--card);border-radius:12px;padding:8px 8px 8px 12px;margin-bottom:12px;font-size:13px;color:var(--mut)}
+.demo button{border:0;background:var(--bg);color:var(--fg);border-radius:8px;padding:7px 10px;font:inherit;font-size:13px}
+</style></head><body>
+<main>
+<div id="demo"></div>
+<section id="v-timer">
+ <div id="setup"></div>
+ <div class="clock" id="clock">00:00</div>
+ <div class="sub" id="sub"></div>
+ <div class="sub" id="today"></div>
+ <div class="ctrl" id="ctrl"></div>
+</section>
+<section id="v-stats" hidden>
+ <div class="seg" id="rng">
+  <button data-a="rng" data-v="day">Day</button><button data-a="rng" data-v="week">Week</button><button data-a="rng" data-v="month">Month</button><button data-a="rng" data-v="half">6 mo</button><button data-a="rng" data-v="all">All</button>
+ </div>
+ <div class="nav" id="pnav"><button data-a="prev" aria-label="Previous">‹</button><b id="plabel"></b><button data-a="next" id="nx" aria-label="Next">›</button></div>
+ <select id="fil" aria-label="Filter by module"></select>
+ <div id="sbody"></div>
+</section>
+<section id="v-hist" hidden>
+ <h2>Sessions</h2><div id="hlist"></div><div id="hmore"></div>
+ <div id="dm"></div><h2>Modules</h2><div class="chips" id="mods"></div>
+ <p class="mut">Removing a module doesn’t delete past sessions.</p>
+ <details><summary>Backup and restore</summary>
+  <p class="mut">Your data lives only in this browser on this phone. Copy a backup now and then and keep it somewhere safe. Restoring merges sessions in, it never overwrites.</p>
+  <div class="row"><button class="btn ghost" data-a="exp">Show / copy backup</button><button class="btn ghost" data-a="restore">Restore from text</button></div>
+  <textarea id="bk" placeholder="Backup text appears here. To restore, paste it here first." spellcheck="false"></textarea>
+  <p class="mut" id="bkmsg"></p>
+ </details>
+</section>
+</main>
+<nav><button data-a="tab" data-v="timer" class="on">Timer</button><button data-a="tab" data-v="stats">Stats</button><button data-a="tab" data-v="hist">History</button></nav>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const K='studytimer.v1',MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+let S={sessions:[],modules:[],active:null,pref:{mode:'down',min:25,tag:''}};
+try{const r=localStorage.getItem(K);if(r){const o=JSON.parse(r);S={...S,...o,pref:{...S.pref,...(o.pref||{})}}}}catch(e){}
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+function seedDemo(){let a=20261112;const r=()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+ const mods=['Computer Science','Mathematics','Physics','Statistics'],wt=[.35,.25,.25,.15];
+ const pick=()=>{let x=r(),i=0;while(i<3&&x>wt[i]){x-=wt[i];i++}return mods[i]};
+ const now=Date.now(),n=new Date();let c=0;
+ for(let i=0;i<200;i++){const wk=new Date(n.getFullYear(),n.getMonth(),n.getDate()-i).getDay(),p=(wk===0||wk===6)?.55:.82;if(r()>p)continue;
+  const k=1+Math.floor(r()*3);let h=8+Math.floor(r()*4);
+  for(let j=0;j<k;j++){const st=new Date(n.getFullYear(),n.getMonth(),n.getDate()-i,h,Math.floor(r()*50)).getTime();h+=2+Math.floor(r()*3);if(st>now-6e4)continue;
+   const down=r()<.55;let plan=0,d;
+   if(down){plan=[25,45,60,90][Math.floor(r()*4)]*60;d=r()<.85?plan:Math.round(plan*(.4+r()*.5))}else d=(15+Math.floor(r()*95))*60;
+   S.sessions.push({id:'demo'+(c++),tag:pick(),start:st,dur:d,mode:down?'down':'up',plan,demo:true})}}
+ S.demoMods=mods.filter(m=>!S.modules.includes(m));S.modules.push(...S.demoMods);S.seeded=true;save()}
+function clearDemo(){S.sessions=S.sessions.filter(x=>!x.demo);S.modules=S.modules.filter(m=>!(S.demoMods||[]).includes(m)||S.sessions.some(x=>x.tag===m));S.demoMods=[];if(!S.modules.includes(S.pref.tag))S.pref.tag='';ST.tag='*';S.seeded=true;save()}
+function renderDemo(){$('#demo').innerHTML=S.sessions.some(x=>x.demo)?'<div class="demo"><span>Sample data is loaded</span><button data-a="cleardemo">Clear sample data</button></div>':''}
+function refresh(){renderDemo();const t=['timer','stats','hist'].find(k=>!$('#v-'+k).hidden);({timer:renderTimer,stats:renderStats,hist:renderHist})[t]()}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const clk=t=>{t=Math.max(0,Math.floor(t));const h=Math.floor(t/3600),m=Math.floor(t%3600/60);return(h?h+':'+pad(m):pad(m))+':'+pad(t%60)};
+const dur=t=>{t=Math.round(t);if(t<60)return t+'s';const q=Math.round(t/60),h=Math.floor(q/60),m=q%60;return h?h+'h'+(m?' '+m+'m':''):m+'m'};
+const tagName=t=>t||'No module';
+const fd=(d,o)=>d.toLocaleDateString(undefined,o);
+const el=a=>a.acc+(a.start?(Date.now()-a.start)/1000:0);
+let note='',wl=null,HN=50,ST={kind:'week',off:0,tag:'*'};
+
+async function lock(on){try{if(on&&navigator.wakeLock&&!wl){wl=await navigator.wakeLock.request('screen');wl.addEventListener('release',()=>wl=null)}else if(!on&&wl){await wl.release();wl=null}}catch(e){}}
+function alarm(){try{navigator.vibrate&&navigator.vibrate([300,150,300,150,300])}catch(e){}try{const c=new(window.AudioContext||window.webkitAudioContext)();[0,.35,.7].forEach(t=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.15;o.start(c.currentTime+t);o.stop(c.currentTime+t+.2)})}catch(e){}}
+
+function finish(auto){const a=S.active;if(!a)return;let d=el(a);if(a.mode==='down'&&d>a.target)d=a.target;
+ if(d>=1){S.sessions.push({id:a.t0.toString(36)+Math.random().toString(36).slice(2,6),tag:a.tag,start:a.t0,dur:Math.round(d),mode:a.mode,plan:a.target});note='Saved '+dur(d)+' · '+tagName(a.tag)}else note='';
+ S.active=null;save();lock(false);if(auto)alarm();renderTimer()}
+function tick(){const a=S.active;if(!a)return;const e=el(a);if(a.mode==='down'&&e>=a.target){finish(e-a.target<10);return}$('#clock').textContent=clk(a.mode==='down'?a.target-e:e)}
+setInterval(tick,250);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(S.active&&S.active.start)lock(true);tick()}});
+
+function renderTimer(){const a=S.active,p=S.pref;$('#setup').hidden=!!a;
+ const t0=new Date();t0.setHours(0,0,0,0);const td=S.sessions.filter(x=>x.start>=t0.getTime()).reduce((n,x)=>n+x.dur,0);
+ $('#today').textContent=td?'Today: '+dur(td):'';
+ if(a){$('#sub').textContent=tagName(a.tag)+' · '+(a.mode==='down'?'Countdown '+Math.round(a.target/60)+'m':'Open-ended')+(a.start?'':' · Paused');
+  $('#ctrl').innerHTML=`<button class="btn" data-a="${a.start?'pause':'resume'}">${a.start?'Pause':'Resume'}</button><button class="btn ghost" data-a="stop">Stop and save</button><button class="lnk" data-a="discard">Discard</button>`;
+  $('#clock').textContent=clk(a.mode==='down'?a.target-el(a):el(a));return}
+ $('#clock').textContent=p.mode==='down'?clk(p.min*60):'00:00';
+ $('#sub').textContent=note||(p.mode==='down'?'Counts down to zero':'Counts up until you stop');
+ $('#ctrl').innerHTML='<button class="btn" data-a="start">Start</button>';
+ $('#setup').innerHTML=`<div class="seg"><button data-a="mode" data-v="down" class="${p.mode==='down'?'on':''}">Countdown</button><button data-a="mode" data-v="up" class="${p.mode==='up'?'on':''}">Open-ended</button></div>
+ ${p.mode==='down'?`<div class="chips">${[25,45,60,90].map(m=>`<button class="chip ${p.min===m?'on':''}" data-a="min" data-v="${m}">${m}m</button>`).join('')}<input id="min" type="number" inputmode="numeric" min="1" max="999" value="${p.min}" aria-label="Minutes"></div>`:''}
+ <label class="lab" for="tag">Module</label>
+ <select id="tag"><option value="">No module</option>${S.modules.map(m=>`<option value="${esc(m)}"${p.tag===m?' selected':''}>${esc(m)}</option>`).join('')}</select>
+ <div class="row"><input id="nm" placeholder="New module" maxlength="40"><button class="btn ghost" data-a="addmod">Add</button></div>`}
+
+function range(kind,off){const n=new Date(),y=n.getFullYear(),m=n.getMonth(),d=n.getDate();let s,e;
+ if(kind==='day'){s=new Date(y,m,d+off);e=new Date(y,m,d+off+1)}
+ else if(kind==='week'){const w=(n.getDay()+6)%7;s=new Date(y,m,d-w+off*7);e=new Date(y,m,d-w+off*7+7)}
+ else if(kind==='month'){s=new Date(y,m+off,1);e=new Date(y,m+off+1,1)}
+ else if(kind==='half'){s=new Date(y,(m<6?0:6)+off*6,1);e=new Date(y,s.getMonth()+6,1)}
+ else{const f=S.sessions.length?new Date(Math.min(...S.sessions.map(x=>x.start))):n;s=new Date(f.getFullYear(),f.getMonth(),1);e=new Date(y,m+1,1)}
+ return[s,e]}
+
+function renderStats(){const{kind,off,tag}=ST,[s,e]=range(kind,off);
+ $$('#rng button').forEach(b=>b.classList.toggle('on',b.dataset.v===kind));
+ $('#pnav').style.display=kind==='all'?'none':'flex';$('#nx').disabled=off>=0;
+ $('#plabel').textContent=kind==='day'?fd(s,{weekday:'short',day:'numeric',month:'short',year:'numeric'}):kind==='week'?fd(s,{day:'numeric',month:'short'})+' – '+fd(new Date(e.getFullYear(),e.getMonth(),e.getDate()-1),{day:'numeric',month:'short'}):kind==='month'?fd(s,{month:'long',year:'numeric'}):kind==='half'?MON[s.getMonth()]+' – '+MON[(s.getMonth()+5)%12]+' '+s.getFullYear():'All time';
+ const tags=[...new Set([...S.modules,...S.sessions.map(x=>x.tag)])];
+ $('#fil').innerHTML='<option value="*">All modules</option>'+tags.map(t=>`<option value="${esc(t)}"${tag===t?' selected':''}>${esc(tagName(t))}</option>`).join('');
+ const L=S.sessions.filter(x=>x.start>=s.getTime()&&x.start<e.getTime()&&(tag==='*'||x.tag===tag));
+ if(!L.length){$('#sbody').innerHTML='<p class="mut" style="margin-top:20px">No study sessions in this period.</p>';return}
+ const tot=L.reduce((a,x)=>a+x.dur,0),du=L.map(x=>x.dur);
+ let n,lab,idx;
+ if(kind==='day'){n=24;lab=i=>i%6===0?pad(i):'';idx=d=>d.getHours()}
+ else if(kind==='week'){n=7;lab=i=>'MTWTFSS'[i];idx=d=>(d.getDay()+6)%7}
+ else if(kind==='month'){n=Math.round((e-s)/864e5);lab=i=>i%5===0?i+1:'';idx=d=>d.getDate()-1}
+ else{n=(e.getFullYear()-s.getFullYear())*12+e.getMonth()-s.getMonth();const st=Math.ceil(n/8);
+  lab=i=>{if(i%st)return'';const d=new Date(s.getFullYear(),s.getMonth()+i,1);return MON[d.getMonth()]+(i===0||d.getMonth()===0?' ’'+String(d.getFullYear()).slice(2):'')};
+  idx=d=>(d.getFullYear()-s.getFullYear())*12+d.getMonth()-s.getMonth()}
+ const B=Array(n).fill(0);L.forEach(x=>{const i=idx(new Date(x.start));if(i>=0&&i<n)B[i]+=x.dur});const mx=Math.max(...B,1);
+ const D={};L.forEach(x=>{const d=new Date(x.start),k=d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate();D[k]=(D[k]||0)+x.dur});const dv=Object.values(D);
+ const now=new Date(),tmr=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1);let ds=s;
+ if(kind==='all'){const f=new Date(Math.min(...S.sessions.map(x=>x.start)));ds=new Date(f.getFullYear(),f.getMonth(),f.getDate())}
+ const days=Math.max(1,Math.round((Math.min(e,tmr)-ds)/864e5));
+ const T=[['Total',dur(tot)],['Sessions',L.length],['Avg session',dur(tot/L.length)],['Longest session',dur(Math.max(...du))],['Shortest session',dur(Math.min(...du))]];
+ if(kind!=='day')T.push(['Daily avg (all days)',dur(tot/days)],['Best day',dur(Math.max(...dv))],['Lowest study day',dur(Math.min(...dv))]);
+ let h=`<div class="grid">${T.map(t=>`<div class="tile"><b>${t[1]}</b><span>${t[0]}</span></div>`).join('')}</div>
+ <div class="chart">${B.map((v,i)=>`<div class="bar" title="${dur(v)}"><div class="f"><i style="height:${v/mx*100}%"></i></div><em>${lab(i)}</em></div>`).join('')}</div>`;
+ if(tag==='*'){const M={};L.forEach(x=>M[x.tag]=(M[x.tag]||0)+x.dur);
+  h+='<h2>By module</h2>'+Object.entries(M).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="mrow"><div><span>${esc(tagName(k))}</span><span>${dur(v)}</span></div><u style="width:${v/tot*100}%"></u></div>`).join('')}
+ $('#sbody').innerHTML=h}
+
+function renderHist(){const L=[...S.sessions].sort((a,b)=>b.start-a.start);
+ $('#hlist').innerHTML=L.slice(0,HN).map(x=>{const d=new Date(x.start);return`<div class="item"><div><b>${esc(tagName(x.tag))}</b><small>${fd(d,{day:'numeric',month:'short'})} · ${d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'})} · ${x.mode==='down'?'Countdown '+dur(x.plan):'Open-ended'}</small></div><div class="end"><span>${dur(x.dur)}</span><button class="x" data-a="del" data-id="${esc(x.id)}" aria-label="Delete session">×</button></div></div>`}).join('')||'<p class="mut">No sessions yet.</p>';
+ $('#hmore').innerHTML=L.length>HN?'<button class="lnk" data-a="more">Show more</button>':'';
+ $('#dm').innerHTML=S.sessions.some(x=>x.demo)?'':'<button class="lnk" data-a="loaddemo">Load sample data</button>';
+ $('#mods').innerHTML=S.modules.map((m,i)=>`<span class="chip">${esc(m)}<button data-a="rmmod" data-i="${i}" aria-label="Remove module">×</button></span>`).join('')||'<span class="mut">None yet. Add one on the Timer tab.</span>'}
+
+function arm(b,txt,back){if(b.dataset.arm)return true;b.dataset.arm=1;b.textContent=txt;b.classList.add('arm');setTimeout(()=>{delete b.dataset.arm;b.textContent=back;b.classList.remove('arm')},3000);return false}
+const bmsg=t=>$('#bkmsg').textContent=t;
+const act={
+ mode(b){S.pref.mode=b.dataset.v;save();renderTimer()},
+ min(b){S.pref.min=+b.dataset.v;save();renderTimer()},
+ addmod(){const v=$('#nm').value.trim();if(!v)return;if(!S.modules.includes(v))S.modules.push(v);S.pref.tag=v;save();renderTimer()},
+ start(){const p=S.pref,t=Date.now();note='';S.active={tag:p.tag,mode:p.mode,target:p.mode==='down'?p.min*60:0,acc:0,start:t,t0:t};save();lock(true);renderTimer()},
+ pause(){const a=S.active;a.acc=el(a);a.start=null;save();lock(false);renderTimer()},
+ resume(){S.active.start=Date.now();save();lock(true);renderTimer()},
+ stop(){finish(false)},
+ discard(b){if(!arm(b,'Tap again to discard','Discard'))return;S.active=null;note='';save();lock(false);renderTimer()},
+ tab(b){const t=b.dataset.v;['timer','stats','hist'].forEach(k=>$('#v-'+k).hidden=k!==t);$$('nav button').forEach(x=>x.classList.toggle('on',x.dataset.v===t));({timer:renderTimer,stats:renderStats,hist:renderHist})[t]()},
+ rng(b){ST.kind=b.dataset.v;ST.off=0;renderStats()},
+ prev(){ST.off--;renderStats()},
+ next(){if(ST.off<0){ST.off++;renderStats()}},
+ del(b){if(!arm(b,'Delete?','×'))return;S.sessions=S.sessions.filter(x=>x.id!==b.dataset.id);save();renderDemo();renderHist()},
+ rmmod(b){const m=S.modules[+b.dataset.i];S.modules.splice(+b.dataset.i,1);if(S.pref.tag===m)S.pref.tag='';save();renderHist()},
+ more(){HN+=50;renderHist()},
+ cleardemo(){clearDemo();refresh()},
+ loaddemo(){seedDemo();refresh()},
+ exp(){const t=$('#bk');t.value=JSON.stringify({v:1,sessions:S.sessions,modules:S.modules});t.focus();t.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}bmsg(ok?'Copied. Paste it into a note or message to yourself.':'Select all the text above and copy it.')},
+ restore(){try{const o=JSON.parse($('#bk').value);if(!o||!Array.isArray(o.sessions))throw 0;const ids=new Set(S.sessions.map(x=>String(x.id)));let n=0;
+  o.sessions.forEach(x=>{if(x&&typeof x.dur==='number'&&typeof x.start==='number'&&!ids.has(String(x.id))){const t=String(x.tag||'');S.sessions.push({id:String(x.id),tag:t,start:x.start,dur:x.dur,mode:x.mode==='down'?'down':'up',plan:+x.plan||0});ids.add(String(x.id));n++;if(t&&!S.modules.includes(t))S.modules.push(t)}});
+  (o.modules||[]).forEach(m=>{if(typeof m==='string'&&m&&!S.modules.includes(m))S.modules.push(m)});save();renderHist();bmsg('Restored '+n+' new session'+(n===1?'':'s')+'.')}catch(e){bmsg('That doesn’t look like a valid backup.')}}
+};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(b&&act[b.dataset.a])act[b.dataset.a](b)});
+document.addEventListener('input',e=>{if(e.target.id==='min'){S.pref.min=Math.min(999,Math.max(1,Math.floor(+e.target.value)||1));save();if(!S.active)$('#clock').textContent=clk(S.pref.min*60)}});
+document.addEventListener('change',e=>{if(e.target.id==='tag'){S.pref.tag=e.target.value;save()}if(e.target.id==='fil'){ST.tag=e.target.value;renderStats()}});
+if(!S.seeded&&!S.sessions.length)seedDemo();
+renderDemo();renderTimer();if(S.active&&S.active.start)lock(true);tick();
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script></body></html>
